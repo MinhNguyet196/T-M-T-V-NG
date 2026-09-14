@@ -41,6 +41,18 @@ document.addEventListener('click', e => {
   if (e.target.closest('#newSetBtn, #editBtn')) setTimeout(restoreDraft, 0);
   if (e.target.closest('#saveSetBtn') && draftKey) setTimeout(() => localStorage.removeItem(draftKey), 900);
 });
+// Bắt ở pha capture để nút “Quay lại bộ từ” luôn hoạt động, không phụ thuộc sự kiện của màn hiện tại.
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-go="home"]')) return;
+  allowHome = true;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  showView('home');
+  history.pushState({ view: 'home' }, '', '#home');
+  lastView = 'home';
+  sessionStorage.setItem('tim-tu-vung-last-view', 'home');
+  setTimeout(() => allowHome = false, 0);
+}, true);
 window.addEventListener('popstate', e => { suppressHistory = true; allowHome = true; showView(e.state?.view || 'home'); setTimeout(() => { suppressHistory = false; allowHome = false; }, 0); });
 const observer = new MutationObserver(() => {
   const view = activeView();
